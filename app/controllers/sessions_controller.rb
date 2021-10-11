@@ -1,39 +1,11 @@
 class SessionsController < ApplicationController
 
-  before_action :set_current_user, except: [:create, :reset_password, :sign_up]
+  before_action :set_current_user, except: [:create]
 
   def create
     user = User.find_by!(email: params[:email])
     if user&.valid_password?(params[:password])
       render json: { payload: encode_payload(user) }, status: :created
-    else
-      head(:unauthorized)
-    end
-  end
-
-  def send_reset_password_email
-    user = User.find_by!(email: params[:email])
-    if user.present?
-      if user.generate_password_token!
-        ApplicationMailer.with(user: user).reset_password.deliver_later(user)
-        head(:ok)
-      else
-        head(:unauthorized)
-      end
-    else
-      head(:unauthorized)
-    end
-  end
-
-  def reset_password
-    user = User.find_by!(email: params[:email])
-    if user.present?
-      if user.reset_password_token == params[:reset_password_token]
-        user.reset_password(params[:password])
-        head(:ok)
-      else
-        head(:unauthorized)
-      end
     else
       head(:unauthorized)
     end

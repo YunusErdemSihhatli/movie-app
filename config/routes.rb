@@ -6,10 +6,5 @@ Rails.application.routes.draw do
 
   post "/graphql", to: "graphql#execute"
 
-  resources :sessions, only: [:create] do
-    collection do
-      post 'send_reset_password_email'
-      post 'reset_password'
-    end
-  end
+  resources :sessions, only: [:create]
 end
